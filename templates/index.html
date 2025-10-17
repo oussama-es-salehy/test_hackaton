@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR avec Gemini</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            padding: 50px;
+            background: #f0f2f5;
+        }
+        
+        .upload-area {
+            border: 2px dashed #667eea;
+            padding: 40px;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        
+        img {
+            max-width: 400px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        textarea {
+            width: 80%;
+            height: 200px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📸 OCR avec Gemini Vision</h1>
+
+    <div class="upload-area" id="uploadArea">
+        Cliquez ou glissez une image ici
+        <input type="file" id="fileInput" accept="image/*" style="display:none;">
+    </div>
+    <img id="preview">
+
+    <div>
+        <button id="extractBtn">Extraire le texte</button>
+    </div>
+
+    <textarea id="result" placeholder="Le texte extrait apparaîtra ici..."></textarea>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const result = document.getElementById('result');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('extractBtn').addEventListener('click', async() => {
+            if (!fileInput.files[0]) {
+                alert("Sélectionnez d'abord une image !");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+
+            // ⚠️ L’endpoint '/ocr-gemini' doit être implémenté en backend pour appeler l’API Gemini
+            const response = await fetch('/ocr-gemini', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            result.value = data.text || "Aucun texte détecté";
+        });
+    </script>
+</body>
+
+</html>
