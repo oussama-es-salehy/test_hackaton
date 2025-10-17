@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration
-ELEVENLABS_API_KEY = "f64339ffe9b62d741994a567fe09866e2fdf0ec5875a12aad700410f91e4129b"
+ELEVENLABS_API_KEY = ""
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a', 'webm', 'mp4'}
 
